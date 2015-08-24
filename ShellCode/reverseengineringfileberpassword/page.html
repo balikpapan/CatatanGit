@@ -1,0 +1,603 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ReverseEngineringFileBerpassword</title>
+</head><body><span style="font-size: 13pt">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+<b><span style="font-family: Times New Roman, serif"><div style="text-align: left">Cara membuat file binary berpassword:<br/>
+</div></span></b><div style="text-align: left"><br/>
+</div>&nbsp;<span style="font-family: Times New Roman, serif"><div style="text-align: left"><a href="http://regnartstranger.blogspot.com/2012/05/reverse-engineering-c-binaries-linux.html">http://regnartstranger.blogspot.com/2012/05/reverse-engineering-c-binaries-linux.html</a></div></span><div style="text-align: left"><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><b><span style="font-family: Times New Roman, serif">Petunjuk:</span></b><br/>
+<span style="font-family: Times New Roman, serif"><br/>
+</span><span style="font-family: Times New Roman, serif">libc.so.6</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">Tutorial compile source code C:</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif"><a href="http://www.codecoffee.com/tipsforlinux/articles/18.html">http://www.codecoffee.com/tipsforlinux/articles/18.html</a></span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">Membuat sebuah file bernama Latihan4.c dengan source code:</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">#include&lt;stdio.h&gt; </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">int main() </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">{ </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">int password; </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">printf(Enter Password : -); </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">scanf(%d,&amp;password); </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">if(password==1024) </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">printf(correct!\n); </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">else </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">printf(wrong\n); </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">return 0; </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">}</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<span style="font-family: Times New Roman, serif"><div style="text-align: left">kemudian compile dengan perintah:</div></span><div style="text-align: left"><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<span style="font-family: Times New Roman, serif"><b>gcc -o pass1 Latihan4.c</b></span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">maka akan muncul file : pass1</span><br/>
+<span style="font-family: Times New Roman, serif"><br/>
+</span><span style="font-family: Times New Roman, serif">file ini merupakan file binary. Untuk menjalankannya kita beri perintah:</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">chmod + x pass1</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">kemudian jalankan dengan perintah : ./pass1</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">kemudian isikan password: 1024 , maka program akan memberi jawan correct</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<span style="font-family: Times New Roman, serif">untuk mengetahui info file nya jalankan perintah:</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">file pass1</span><br/>
+</div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">maka muncul keterangan:</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">pass1: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0x1686823a62f06df9af2cc55d4dc8bcf9ab89c6c2, not stripped</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<span style="font-family: Times New Roman, serif">Kemudian kita mencoba melakukan reverse enginering dengan memanfaatkan objdump, perintahnya:</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">objdump -d pass1</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<span style="font-family: Times New Roman, serif">maka didapatkan hasil:</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<span style="font-family: Times New Roman, serif">pass1: file format elf32-i386 </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">Disassembly of section .init: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<span style="font-family: Times New Roman, serif">08048324 &lt;_init&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048324: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048325: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048327: 53 push %ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048328: 83 ec 04 sub $0x4,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804832b: e8 00 00 00 00 call 8048330 &lt;_init+0xc&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048330: 5b pop %ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048331: 81 c3 04 14 00 00 add $0x1404,%ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048337: 8b 93 fc ff ff ff mov -0x4(%ebx),%edx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804833d: 85 d2 test %edx,%edx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804833f: 74 05 je 8048346 &lt;_init+0x22&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048341: e8 3a 00 00 00 call 8048380 &lt;__gmon_start__@plt&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048346: 58 pop %eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048347: 5b pop %ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048348: c9 leave </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048349: c3 ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<span style="font-family: Times New Roman, serif">Disassembly of section .plt: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048350 &lt;printf@plt-0x10&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048350: ff 35 38 97 04 08 pushl 0x8049738 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048356: ff 25 3c 97 04 08 jmp *0x804973c </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804835c: 00 00 add %al,(%eax) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">&nbsp;... </span>&nbsp;<br/>
+</div>&nbsp;<span style="font-family: Times New Roman, serif"><div style="text-align: left">08048360 <b>&lt;printf@plt&gt;:</b>&nbsp;</div></span><div style="text-align: left">&nbsp;<br/>
+</div>&nbsp;<span style="font-family: Times New Roman, serif"><div style="text-align: left">8048360: ff 25 40 97 04 08 jmp *0x8049740 </div></span>&nbsp;<br/>
+&nbsp;<span style="font-family: Times New Roman, serif"><div style="text-align: left">8048366: 68 00 00 00 00 push $0x0 </div></span>&nbsp;<br/>
+&nbsp;<span style="font-family: Times New Roman, serif"><div style="text-align: left">804836b: e9 e0 ff ff ff jmp 8048350 &lt;_init+0x2c&gt; </div></span>&nbsp;<br/>
+&nbsp;<br/>
+<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048370 <b>&lt;puts@plt&gt;: </b></span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048370: ff 25 44 97 04 08 jmp *0x8049744 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048376: 68 08 00 00 00 push $0x8 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804837b: e9 d0 ff ff ff jmp 8048350 &lt;_init+0x2c&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+</div><br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048380 &lt;__gmon_start__@plt&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048380: ff 25 48 97 04 08 jmp *0x8049748 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048386: 68 10 00 00 00 push $0x10 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804838b: e9 c0 ff ff ff jmp 8048350 &lt;_init+0x2c&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048390 &lt;__libc_start_main@plt&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048390: ff 25 4c 97 04 08 jmp *0x804974c </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048396: 68 18 00 00 00 push $0x18 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804839b: e9 b0 ff ff ff jmp 8048350 &lt;_init+0x2c&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+</div><br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">080483a0 <b>&lt;__isoc99_scanf@plt&gt;: </b></span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483a0: ff 25 50 97 04 08 jmp *0x8049750 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483a6: 68 20 00 00 00 push $0x20 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483ab: e9 a0 ff ff ff jmp 8048350 &lt;_init+0x2c&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+</div><br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">Disassembly of section .text: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">080483b0 &lt;_start&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483b0: 31 ed xor %ebp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483b2: 5e pop %esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483b3: 89 e1 mov %esp,%ecx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483b5: 83 e4 f0 and $0xfffffff0,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483b8: 50 push %eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483b9: 54 push %esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483ba: 52 push %edx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483bb: 68 00 85 04 08 push $0x8048500 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483c0: 68 10 85 04 08 push $0x8048510 </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483c5: 51 push %ecx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483c6: 56 push %esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483c7: 68 9c 84 04 08 push $0x804849c </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483cc: e8 bf ff ff ff call 8048390 &lt;__libc_start_main@plt&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d1: f4 hlt </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d2: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d3: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d4: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d5: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d6: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d7: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d8: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483d9: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483da: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483db: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483dc: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483dd: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483de: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483df: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">080483e0 &lt;deregister_tm_clones&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483e0: b8 5f 97 04 08 mov $0x804975f,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483e5: 2d 5c 97 04 08 sub $0x804975c,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483ea: 83 f8 06 cmp $0x6,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483ed: 77 02 ja 80483f1 &lt;deregister_tm_clones+0x11&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483ef: f3 c3 repz ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483f1: b8 00 00 00 00 mov $0x0,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483f6: 85 c0 test %eax,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483f8: 74 f5 je 80483ef &lt;deregister_tm_clones+0xf&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483fa: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483fb: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80483fd: 83 ec 18 sub $0x18,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048400: c7 04 24 5c 97 04 08 movl $0x804975c,(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048407: ff d0 call *%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048409: c9 leave </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804840a: c3 ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804840b: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804840c: 8d 74 26 00 lea 0x0(%esi,%eiz,1),%esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048410 &lt;register_tm_clones&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048410: b8 5c 97 04 08 mov $0x804975c,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048415: 2d 5c 97 04 08 sub $0x804975c,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804841a: c1 f8 02 sar $0x2,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804841d: 89 c2 mov %eax,%edx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804841f: c1 ea 1f shr $0x1f,%edx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048422: 01 d0 add %edx,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048424: d1 f8 sar %eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048426: 75 02 jne 804842a &lt;register_tm_clones+0x1a&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048428: f3 c3 repz ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804842a: ba 00 00 00 00 mov $0x0,%edx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804842f: 85 d2 test %edx,%edx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048431: 74 f5 je 8048428 &lt;register_tm_clones+0x18&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048433: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048434: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048436: 83 ec 18 sub $0x18,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048439: 89 44 24 04 mov %eax,0x4(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804843d: c7 04 24 5c 97 04 08 movl $0x804975c,(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048444: ff d2 call *%edx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048446: c9 leave </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048447: c3 ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048448: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048449: 8d b4 26 00 00 00 00 lea 0x0(%esi,%eiz,1),%esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048450 &lt;__do_global_dtors_aux&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048450: 80 3d 5c 97 04 08 00 cmpb $0x0,0x804975c </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048457: 75 13 jne 804846c &lt;__do_global_dtors_aux+0x1c&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048459: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804845a: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804845c: 83 ec 08 sub $0x8,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804845f: e8 7c ff ff ff call 80483e0 &lt;deregister_tm_clones&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048464: c6 05 5c 97 04 08 01 movb $0x1,0x804975c </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804846b: c9 leave </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804846c: f3 c3 repz ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804846e: 66 90 xchg %ax,%ax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048470 &lt;frame_dummy&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048470: a1 3c 96 04 08 mov 0x804963c,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048475: 85 c0 test %eax,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048477: 74 1e je 8048497 &lt;frame_dummy+0x27&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048479: b8 00 00 00 00 mov $0x0,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804847e: 85 c0 test %eax,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048480: 74 15 je 8048497 &lt;frame_dummy+0x27&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048482: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048483: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048485: 83 ec 18 sub $0x18,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048488: c7 04 24 3c 96 04 08 movl $0x804963c,(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804848f: ff d0 call *%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048491: c9 leave </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048492: e9 79 ff ff ff jmp 8048410 &lt;register_tm_clones&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048497: e9 74 ff ff ff jmp 8048410 &lt;register_tm_clones&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">0804849c &lt;main&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804849c: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804849d: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804849f: 83 e4 f0 and $0xfffffff0,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484a2: 83 ec 20 sub $0x20,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484a5: c7 04 24 90 85 04 08 movl $0x8048590,(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484ac: e8 af fe ff ff call 8048360 </span></div><span style="font-family: Times New Roman, serif"><b>&lt;printf@plt&gt; </b></span>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484b1: 8d 44 24 1c lea 0x1c(%esp),%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484b5: 89 44 24 04 mov %eax,0x4(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484b9: c7 04 24 a3 85 04 08 movl $0x80485a3,(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484c0: e8 db fe ff ff call 80483a0 </span></div><span style="font-family: Times New Roman, serif"><b>&lt;__isoc99_scanf@plt&gt; </b></span>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484c5: 8b 44 24 1c mov 0x1c(%esp),%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484c9: 3d 00 04 00 00 </span></div><span style="font-family: Times New Roman, serif"><b>cmp</b>&nbsp;$<b>0x400</b>,%eax </span>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484ce: 75 0e jne 80484de &lt;main+0x42&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484d0: c7 04 24 a6 85 04 08 movl $0x80485a6,(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484d7: e8 94 fe ff ff call 8048370 </span></div><span style="font-family: Times New Roman, serif"><b>&lt;puts@plt&gt; </b></span>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484dc: eb 0c jmp 80484ea &lt;main+0x4e&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484de: c7 04 24 af 85 04 08 movl $0x80485af,(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484e5: e8 86 fe ff ff call 8048370 </span></div><span style="font-family: Times New Roman, serif"><b>&lt;puts@plt&gt; </b></span>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484ea: b8 00 00 00 00 mov $0x0,%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484ef: c9 leave </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f0: c3 ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f1: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f2: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f3: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f4: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f5: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f6: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f7: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f8: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484f9: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484fa: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484fb: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484fc: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484fd: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484fe: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">80484ff: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048500 &lt;__libc_csu_fini&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048500: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048501: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048503: 5d pop %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048504: c3 ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048505: 8d 74 26 00 lea 0x0(%esi,%eiz,1),%esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048509: 8d bc 27 00 00 00 00 lea 0x0(%edi,%eiz,1),%edi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048510 &lt;__libc_csu_init&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048510: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048511: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048513: 57 push %edi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048514: 56 push %esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048515: 53 push %ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048516: e8 4f 00 00 00 call 804856a &lt;__i686.get_pc_thunk.bx&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804851b: 81 c3 19 12 00 00 add $0x1219,%ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048521: 83 ec 1c sub $0x1c,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048524: e8 fb fd ff ff call 8048324 &lt;_init&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048529: 8d bb 04 ff ff ff lea -0xfc(%ebx),%edi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804852f: 8d 83 00 ff ff ff lea -0x100(%ebx),%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048535: 29 c7 sub %eax,%edi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048537: c1 ff 02 sar $0x2,%edi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804853a: 85 ff test %edi,%edi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804853c: 74 24 je 8048562 &lt;__libc_csu_init+0x52&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804853e: 31 f6 xor %esi,%esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048540: 8b 45 10 mov 0x10(%ebp),%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048543: 89 44 24 08 mov %eax,0x8(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048547: 8b 45 0c mov 0xc(%ebp),%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804854a: 89 44 24 04 mov %eax,0x4(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804854e: 8b 45 08 mov 0x8(%ebp),%eax </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048551: 89 04 24 mov %eax,(%esp) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048554: ff 94 b3 00 ff ff ff call *-0x100(%ebx,%esi,4) </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804855b: 83 c6 01 add $0x1,%esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804855e: 39 fe cmp %edi,%esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048560: 72 de jb 8048540 &lt;__libc_csu_init+0x30&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048562: 83 c4 1c add $0x1c,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048565: 5b pop %ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048566: 5e pop %esi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048567: 5f pop %edi </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048568: 5d pop %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048569: c3 ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">0804856a &lt;__i686.get_pc_thunk.bx&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804856a: 8b 1c 24 mov (%esp),%ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804856d: c3 ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804856e: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804856f: 90 nop </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">Disassembly of section .fini: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">08048570 &lt;_fini&gt;: </span>&nbsp;<br/>
+</div>&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048570: 55 push %ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048571: 89 e5 mov %esp,%ebp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048573: 53 push %ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048574: 83 ec 04 sub $0x4,%esp </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048577: e8 00 00 00 00 call 804857c &lt;_fini+0xc&gt; </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804857c: 5b pop %ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">804857d: 81 c3 b8 11 00 00 add $0x11b8,%ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048583: 59 pop %ecx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048584: 5b pop %ebx </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048585: c9 leave </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left">&nbsp;<span style="font-family: Times New Roman, serif">8048586: c3 ret </span></div>&nbsp;<br/>
+&nbsp;<br/>
+<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">password nya adalah : 0x400</span><br/>
+</div>&nbsp;<br/>
+<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">untuk mengubah dari kode hexadecimal ke decimal adalah menggunakan:</span><br/>
+</div>&nbsp;<br/>
+&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">echo $((0x400))</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><span style="font-family: Times New Roman, serif">hasilnya: 1024</span><br/>
+</div>&nbsp;<br/>
+<div style="text-align: left"><br/>
+<br/>
+</div>&nbsp; </span></body></html>
